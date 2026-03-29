@@ -20,7 +20,7 @@
 
 ## Required programes
 
-Plink 2: https://www.cog-genomics.org/plink/ to obtain relatives file, if not already avaiable.
+Plink 2: [https://www.cog-genomics.org/plink/](https://www.cog-genomics.org/plink/2.0/) to obtain relatives file, if not already avaiable.
 
 LDAK (DRM): https://dougspeed.com/drm/
 
