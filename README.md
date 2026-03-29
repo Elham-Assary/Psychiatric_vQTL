@@ -36,14 +36,14 @@ Step-by-step instructions and details on the analysis pipeline are available her
 
 The GWAS phenotype is the symptom score/ continuos score, residualised for sex and age, their interaction, and 10 genetic principal components. The residuals are standardised and used as predictors in the vQTL GWAS. 
 
-The R script to construct the phenotypes, and extract descriptive statistics of the data are in [PreparePheno.R](scripts/PreparePheno.R)
+The R script to construct the phenotypes, and extract descriptive statistics of the data are in [1_PreparePheno.R](scripts/1_PreparePheno.R)
 
 
 **Variance GWAS analyses:**
 
 vQTL analysis is conducted via [LDAK](https://dougspeed.com/drm/). Contact Elham to obtain the download link for LDAK-DRM.
 
-The script to conduct vQTL analysis is [vQTL_GWAS.sh](scripts/vQTL_GWAS.sh).
+The script to conduct vQTL analysis is [2_vQTL_GWAS.sh](scripts/2_vQTL_GWAS.sh).
 
 
 **Data to be returned:**
@@ -51,7 +51,7 @@ The script to conduct vQTL analysis is [vQTL_GWAS.sh](scripts/vQTL_GWAS.sh).
 Individual-level data sharing is not required, as meta-analyses will be performed on summary-level data only. Each cohort should upload the following files via the provided link.
 
 1. **Summary statistics** — gzipped, tab-delimited text files for each ancestry group.  
-The script [FormatResults.R](scripts/FormatResults.R) will obtain HWE per ancestry, merge with the INFO.txt file, and format the summary statistics into the required format:
+The script [3_FormatResults.R](scripts/3_FormatResults.R) will obtain HWE per ancestry, merge with the INFO.txt file, and format the summary statistics into the required format:
 
    - `cohort_pheno_ancestry.vqtl.txt.gz`  
    - If X chromosome analysis is conducted:  
@@ -59,10 +59,10 @@ The script [FormatResults.R](scripts/FormatResults.R) will obtain HWE per ancest
      - `cohort_phenotype_ancestry.X_females.vqtl.txt.gz`  
 
 2. **Cohort/analyst information document** — completed template named `cohort_info.doc`.  
-The script [PreparePheno.R](scripts/PreparePheno.R) produces a descriptive statistics file (`cohort_descStats.csv`) which can be used to fill out the cohort summary document.
+The script [1_PreparePheno.R](scripts/1_PreparePheno.R) produces a descriptive statistics file (`cohort_descStats.csv`) which can be used to fill out the cohort summary document.
 
 ## Overview of the workflow
 
-![Pipeline overview](images/pipeline_overview.jpg)
+![Pipeline overview](./pipeline_overview.jpg)
 
 
