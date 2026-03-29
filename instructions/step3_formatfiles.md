@@ -12,7 +12,7 @@
 - **vQTL sumstats** produced in Step 2: `cohort_phenotype_ancestry.DRM.all` and if available `cohort_phenotype_ancestry.DRM.males` and `cohort_phenotype_ancestry.DRM.females`
 - **ancestry keep files** containing `FID` and `IID` of individuals for each ancestry cluster (e.g., `EUR.keep`, `AFR.keep`)
 - **INFO file** containing SNP imputation quality score (e.g., `INFO.txt` with columns `SNP, INFO`)
-- **Rscript to format results**: [FormatResults.R](scripts/FormatResults.R)
+- **Rscript to format results**: [3_FormatResults.R](../scripts/3_FormatResults.R)
   
  ### Required programs 
  
