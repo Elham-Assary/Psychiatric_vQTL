@@ -19,7 +19,7 @@
 
 ## Script to run
 
-Run the R script [1_PreparePheno.R](scripts/1_PreparePheno.R) to residualise phenotypes by `age`, `Sex`, and `PCs 1–10`, and to generate cohort descriptive statistics. Ensure your input file contains all required columns.
+Run the R script [1_PreparePheno.R](../scripts/1_PreparePheno.R) to residualise phenotypes by `age`, `Sex`, and `PCs 1–10`, and to generate cohort descriptive statistics. Ensure your input file contains all required columns.
 ## Output
 
 - Residualised phenotypes ready for vQTL analysis:  
