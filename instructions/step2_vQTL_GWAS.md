@@ -16,7 +16,7 @@
 - **Covariates file:** including `FID`, `IID`, `10 PCs` and must include `Sex` (males=1, females=2) for Xchromosome analysis, plus any other cohort specific covariates.
 - **ancestry keep file:** lists `FID` and `IID` of individuals to include in genetic ancestry similarity clusters (e.g., `AFR.keep`, `EUR.keep`)
 - **relatives file:** obtained via KING or Plink2. Script includes code for how to obtain this in plink2, if file not available already.
-- **Shell script:** `vQTL_GWAS.sh` to run the variance QTL analysis
+- **Shell script:** [2_vQTL_GWAS.sh](../scripts/2_vQTL_GWAS.sh) to run the variance QTL analysis
 
 ## Required programes
 
