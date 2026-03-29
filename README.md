@@ -10,13 +10,11 @@ This project aims to identify genetic loci associated with variance in psychiatr
 
 ### Instructions
 
-Step-by-step instructions and details on the analysis pipeline are available in the [instructions folder](instructions/) in this repository.  
-You can access individual steps here:
+Step-by-step instructions and details on the analysis pipeline are available here:
 
 - [step1_Phenotype.md](instructions/step1_Phenotype.md) 
 - [step2_vQTL_GWAS.md](instructions/step2_vQTL_GWAS.md) 
 - [step3_formatfiles.md](instructions/step3_formatfiles.md) 
-- [step4_upload_data.md](instructions/step4_upload_data.md) 
 
 
 ### Overview
