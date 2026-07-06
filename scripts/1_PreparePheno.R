@@ -53,7 +53,6 @@ for (ph in phenos) {
 ####### get descriptive stats #####
 
 # Function to calculate descriptive statistics
-
 desc_stats <- function(data){
   data_num <- data[, sapply(data, is.numeric), with=FALSE]
   stats <- data.frame(
@@ -70,29 +69,29 @@ desc_stats <- function(data){
   )
   return(stats)
 }
-                      
+
 raw_phen <- desc_stats(df[, ..phenos])
 vqtl_phen <- desc_stats(resid_df[, ..phenos])
 
-# Covariate summary per phenotype
-covar_stats <- data.frame(
-  Mean_age = mean(df$age, na.rm=TRUE),
-  SD_age = sd(df$age, na.rm=TRUE),
-  N_male = sum(df$Sex == 1, na.rm=TRUE),
-  N_female = sum(df$Sex == 2, na.rm=TRUE)
-)
+# Per-phenotype covariate stats 
+                      
+get_covar_stats <- function(pheno_vec) {
+  keep <- !is.na(pheno_vec)
+  data.frame(
+    Mean_age = mean(df$age[keep], na.rm = TRUE),
+    SD_age   = sd(df$age[keep], na.rm = TRUE),
+    N_male   = sum(df$Sex[keep] == 1, na.rm = TRUE),
+    N_female = sum(df$Sex[keep] == 2, na.rm = TRUE)
+  )
+}
 
-# Add covariate stats to each phenotype row
-raw_phen$Mean_age <- covar_stats$Mean_age
-raw_phen$SD_age <- covar_stats$SD_age
-raw_phen$N_male <- covar_stats$N_male
-raw_phen$N_female <- covar_stats$N_female
-raw_phen$Data <- "raw_phen"
+raw_covar_df  <- do.call(rbind, lapply(phenos, function(ph) get_covar_stats(df[[ph]])))
+vqtl_covar_df <- do.call(rbind, lapply(phenos, function(ph) get_covar_stats(resid_df[[ph]])))
 
-vqtl_phen$Mean_age <- covar_stats$Mean_age
-vqtl_phen$SD_age <- covar_stats$SD_age
-vqtl_phen$N_male <- covar_stats$N_male
-vqtl_phen$N_female <- covar_stats$N_female
+raw_phen  <- cbind(raw_phen,  raw_covar_df)
+vqtl_phen <- cbind(vqtl_phen, vqtl_covar_df)
+
+raw_phen$Data  <- "raw_phen"
 vqtl_phen$Data <- "vqtl_phen"
 
 # Reorder columns
@@ -105,3 +104,4 @@ cat("Residualised phenotypes saved to:", output_pheno, "\n")
 
 fwrite(all_stats, output_stats, sep=",", quote=FALSE, na="NA")
 cat("Descriptive statistics saved to:", output_stats, "\n")
+                                       
