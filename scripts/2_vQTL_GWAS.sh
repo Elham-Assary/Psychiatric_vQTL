@@ -84,28 +84,13 @@ tail -n +2 "${cohort}.king.kin0" | awk '{print $1,$2,$3,$4,$8*2}' > "${cohort}.p
 # - Use this file in vQTL analysis: --relatives "${cohort}.pairs"
 # - Threshold 0.05 ≈ 3rd degree relatives
 
-######################### Step 2: Create separate files based on genetic ancestry similarity clusters #########################
-
-for ancestry in $ancestries
-do
-    keep_file="${ancestry}.keep"
-    out_prefix="${cohort}_${ancestry}"
-    
-    echo "Creating genotype file for ancestry $ancestry"
-    
-    plink2 --bfile "$main_genotype" \
-          --keep "$keep_file" \
-          --make-bed \
-          --out "$out_prefix"
-done
-
-######################### Step 3: Run vQTL GWAS #########################
+######################### Step 2: Run vQTL GWAS #########################
 
 for pheno in $phenoList
 do
     for ancestry in $ancestries
     do
-        genotype="${cohort}_${ancestry}"
+        keep_file="${ancestry}.keep"
         output="${cohort}_${pheno}_${ancestry}"
         
         echo "============================================"
@@ -118,7 +103,8 @@ do
 
         ./ldak6.2.drm \
             --linear "$output" \
-            --bfile "$genotype" \
+            --bfile "$main_genotype" \
+            --keep "$keep_file" \
             --pheno "$phenofile" \
             --covar "$covarfile" \
             --pheno-name "$pheno" \
@@ -130,23 +116,21 @@ do
 
     done
 done
-
-######################### Step 4: X chromosome analysis #########################
+######################### Step 3: X chromosome analysis #########################
 
 for pheno in $phenoList
 do
     for ancestry in $ancestries
     do
-        genotype="${cohort}_${ancestry}"
+        keep_file="${ancestry}.keep"
         output="${cohort}_${pheno}_${ancestry}"
         
         echo "Running LDAK DRM (ChrX): $pheno $ancestry"
 
-        # CHECK: Sex column must exist and be coded 1 = male, 2 = female
-        # CHECK: genome build must match your data (hg18 or hg19)
         ./ldak6.2.drm \
             --linear "$output" \
-            --bfile "$genotype" \
+            --bfile "$main_genotype" \
+            --keep "$keep_file" \
             --pheno "$phenofile" \
             --sexfile "$covarfile" \
             --pheno-name "$pheno" \
