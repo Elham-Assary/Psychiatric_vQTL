@@ -14,8 +14,8 @@ library(data.table)
 cohort <- "TEDS"                      # cohort abbreviation
 phenotypes <- c("dep", "anx", "adhd") # phenotype names
 ancestries <- c("EUR", "AFR", "MID")  # ancestry clusters
-main_genotype <- "TEDS_geno"               # main dataset plink binary files prefix for getting hwe 
-info_file <- "INFO.txt"               # path to INFO file
+main_genotype <- "TEDS"               # main dataset plink binary files prefix for getting hwe 
+info_file <- "INFO.txt"               # path to INFO file, with two columns header SNP, INFO
 
 ## also need ancestry.keep files for relevant ancestries, to get hwe in step1 (file name is assumed to be in the formate of ancestrycode.keep, e.g. EUR.keep)
 
@@ -25,16 +25,27 @@ info_file <- "INFO.txt"               # path to INFO file
 
 combine_vqtl <- function(drm_file, hwe_file = NULL, info_file = NULL) {
   dt <- fread(drm_file)
+
+    # Standardise variant ID column to SNP
+  if ("Predictor" %in% names(dt)) {
+    setnames(dt, "Predictor", "SNP")
+  } else if (!"SNP" %in% names(dt)) {
+    stop("No variant ID column found in ", drm_file,
+         ". Expected 'Predictor' or 'SNP'. Columns present: ",
+         paste(names(dt), collapse = ", "))
+  }
   
-  if (!is.null(hwe_file)) {
+   if (!is.null(hwe_file)) {
     hwe_dt <- fread(hwe_file)
-    if ("MIDP" %in% names(hwe_dt)) {
-      hwe_dt <- hwe_dt[, .(SNP, HWE = MIDP)]
-    } else if ("FEMALE_ONLY_MIDP" %in% names(hwe_dt)) {
-      hwe_dt <- hwe_dt[, .(SNP, HWE = FEMALE_ONLY_MIDP)]
+    setnames(hwe_dt, "#CHROM", "CHROM", skip_absent = TRUE)
+    
+    if ("P" %in% names(hwe_dt)) {
+      hwe_dt <- hwe_dt[, .(SNP = ID, HWE = P)]
     } else {
-      stop("No HWE column found in ", hwe_file)
+      stop("No P column found in ", hwe_file,
+           ". Columns present: ", paste(names(hwe_dt), collapse = ", "))
     }
+    
     dt <- merge(dt, hwe_dt, by = "SNP", all.x = TRUE)
   }
   
@@ -42,14 +53,12 @@ combine_vqtl <- function(drm_file, hwe_file = NULL, info_file = NULL) {
     info_dt <- fread(info_file)
     dt <- merge(dt, info_dt, by = "SNP", all.x = TRUE)
   }
-  
-  return(dt)
+    return(dt)
 }
 
-# ###########################
+##########################
 # Step 1: Run HWE per ancestry and merge autosomes DRM.all
-# ###########################
-
+##########################
 for (ancestry in ancestries) {
   keep_file <- paste0(ancestry, ".keep")
   
@@ -59,7 +68,7 @@ for (ancestry in ancestries) {
   cat("Running PLINK2 --hardy (autosomes + X) for ancestry", ancestry, "...\n")
   system(paste("plink2 --bfile", main_genotype,
                "--keep", keep_file,
-               "--hardy --out", paste0(cohort, "_", ancestry)))
+               "--hardy midp --out", paste0(cohort, "_", ancestry)))
   
   # Autosomes DRM.all
   for (pheno in phenotypes) {
@@ -70,14 +79,13 @@ for (ancestry in ancestries) {
     output_file <- paste0(cohort, "_", pheno, "_", ancestry, ".vqtl.txt")
     fwrite(dt, output_file, sep = "\t", quote = FALSE)
     system(paste0("gzip -f ", output_file))
-    cat("Saved:", output_file, ".gz\n")
+    cat("Saved:", paste0(output_file, ".gz\n"))
   }
 }
 
-# ###########################
+##########################
 # Step 2: X chromosome females and males merge with HWE and INFO
-# ###########################
-
+##########################
 for (ancestry in ancestries) {
   x_hwe_file <- paste0(cohort, "_", ancestry, ".hardy.x")
   
@@ -93,7 +101,7 @@ for (ancestry in ancestries) {
     out_f <- paste0(cohort, "_", pheno, "_", ancestry, ".X_females.vqtl.txt")
     fwrite(dt_f, out_f, sep = "\t", quote = FALSE)
     system(paste0("gzip -f ", out_f))
-    cat("Saved female X chr vQTL:", out_f, ".gz\n")
+    cat("Saved female X chr vQTL:", paste0(out_f, ".gz\n"))
     
     # Males (no HWE)
     drm_males <- paste0(cohort, "_", pheno, "_", ancestry, ".DRM.males")
@@ -101,8 +109,7 @@ for (ancestry in ancestries) {
     out_m <- paste0(cohort, "_", pheno, "_", ancestry, ".X_males.vqtl.txt")
     fwrite(dt_m, out_m, sep = "\t", quote = FALSE)
     system(paste0("gzip -f ", out_m))
-    cat("Saved male X chr vQTL:", out_m, ".gz\n")
+    cat("Saved male X chr vQTL:", paste0(out_m, ".gz\n"))
   }
 }
-
 cat("\nAll phenotypes and ancestries processed successfully.\n")
