@@ -41,11 +41,11 @@ ancestries="EUR AFR MID"        # add or remove genetic ancestry clusters
 # 3. Sex must be coded:
 #    1 = male, 2 = female (required for CHRX)
 #
-# 4. Check genome build and adjust --split-par to hg19 or hg18 when running Xchrom analysis
+# 4. Check genome build and adjust --split-par to hg19 or hg38 when running Xchrom analysis
 
 ######################### Step 1: Create relatives file using PLINK2 / KING #########################
 
-### skip  A) block if you already have a "${cohort}.king.kin0" file for the sample -> go to step B)
+### skip  A) block if you already have a "${cohort}.king.kin0" file for the sample -> go to step B instead
 
 # A) Thin to HapMap3 SNPs and LD-prune (r2 threshold 0.05), then compute KING kinship. Download link for hm3 snps:https://zenodo.org/records/10515792/files/hm3_no_MHC.list.txt?download=1
 
@@ -75,7 +75,9 @@ done
 
 cat ${cohort}.king.kin0.{1..20} > "${cohort}.king.kin0"
 
-# B)Convert KING output to LDAK-compatible .pairs format 
+
+# B)If you have king files aready for your sample, just convert KING output to LDAK-compatible .pairs format, as per following:
+
 
 tail -n +2 "${cohort}.king.kin0" | awk '{print $1,$2,$3,$4,$8*2}' > "${cohort}.pairs"
 
@@ -110,13 +112,15 @@ do
             --pheno-name "$pheno" \
             --covar-numbers 1-13 \
             --DRM AUTOSOMES \
-            --max-threads 20 \
+            --max-threads 4 \
             --exclude-long-alleles YES \
             --relatives "${cohort}.pairs"
 
     done
 done
 ######################### Step 3: X chromosome analysis #########################
+
+
 
 for pheno in $phenoList
 do
@@ -135,8 +139,8 @@ do
             --sexfile "$covarfile" \
             --pheno-name "$pheno" \
             --DRM CHRX \
-            --split-par hg19 \
-            --max-threads 20 \
+            --split-par hg19 \  ### specify as hg19 or hg38
+            --max-threads 4 \
             --exclude-long-alleles YES \
             --relatives "${cohort}.pairs"
 
