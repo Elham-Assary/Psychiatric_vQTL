@@ -13,7 +13,7 @@
 
 - **main genotype file:** PLINK binary files `.bed/.bim/.fam` (e.g., `cohort.bed`)
 - **phenotype file:** `cohort_vQTL.pheno` must include `FID`, `IID`, phenotype columns. See step 1 for phenotype preparation.
-- **covariates file:** including `FID`, `IID`, `10 PCs` and must include `Sex` (males=1, females=2) for Xchromosome analysis, plus any other cohort specific covariates.
+- **covariates file:** including `FID`, `IID` and must include `Sex` (males=1, females=2) for Xchromosome analysis.
 - **ancestry keep file:** lists `FID` and `IID` of individuals to include in genetic ancestry similarity clusters (e.g., `AFR.keep`, `EUR.keep`)
 - **relatives file:** obtained via KING or Plink2. Script includes code for how to obtain this in Plink2, if file not available already.
 - **shell script:** [2_vQTL_GWAS.sh](../scripts/2_vQTL_GWAS.sh) to run the variance QTL analysis
