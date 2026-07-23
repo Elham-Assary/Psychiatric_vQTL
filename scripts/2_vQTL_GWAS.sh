@@ -24,7 +24,7 @@ cohort="TEDS"   # cohort abbreviation
 main_genotype="TEDS" #plink binary file name
 
 phenofile="${cohort}.vQTL.pheno"   # residualised phenotype file produced in step 1 (FID IID + phenotypes)
-covarfile="${cohort}_covars.txt"   # file containing covariates
+covarfile="${cohort}_covars.txt"   # file containing covariates ( to use Sex for Xchromosome analyses)
 phenoList="dep anx adhd"        # add or remove phenotype names
 ancestries="EUR AFR MID"        # add or remove genetic ancestry clusters
 
@@ -108,9 +108,7 @@ do
             --bfile "$main_genotype" \
             --keep "$keep_file" \
             --pheno "$phenofile" \
-            --covar "$covarfile" \
             --pheno-name "$pheno" \
-            --covar-numbers 1-13 \
             --DRM AUTOSOMES \
             --max-threads 4 \
             --exclude-long-alleles YES \
